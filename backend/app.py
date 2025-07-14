@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
@@ -15,6 +15,11 @@ def create_app(config_class):
     migrate.init_app(app, db)
     jwt = JWTManager(app)
     CORS(app)
+
+    # Landing page route
+    @app.route('/')
+    def index():
+        return render_template('index.html')
 
     # Health check endpoint
     @app.route('/api')
