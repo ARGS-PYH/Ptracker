@@ -1,5 +1,6 @@
 from backend.database import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from backend.models.transaction import Transaction
 from datetime import datetime
 
 class User(db.Model):
@@ -13,8 +14,8 @@ class User(db.Model):
     
     # Relationships
     transactions = db.relationship('Transaction', backref='user', lazy=True, cascade='all, delete-orphan')
-    categories = db.relationship('Category', backref='user', lazy=True, cascade='all, delete-orphan')
-    budgets = db.relationship('Budget', backref='user', lazy=True, cascade='all, delete-orphan')
+    # categories = db.relationship('Category', backref='user', lazy=True, cascade='all, delete-orphan')
+    # budgets = db.relationship('Budget', backref='user', lazy=True, cascade='all, delete-orphan')
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
