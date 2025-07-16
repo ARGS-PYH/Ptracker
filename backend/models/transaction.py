@@ -1,7 +1,7 @@
 from backend.database import db
 from datetime import datetime
 
-class Transaction(db.Model):
+class Transactions(db.Model):
     __tablename__ = 'transactions'
 
     id = db.Column(db.Integer, primary_key=True)
