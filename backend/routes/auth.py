@@ -2,7 +2,6 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from backend.models.user import User
 from backend.database import db
-from werkzeug.security import generate_password_hash
 import re
 
 auth_bp = Blueprint('auth', __name__)
@@ -39,12 +38,7 @@ def register():
     
     user = User(username=username, email=email)
     user.set_password(password)
-
-    # hashing the password
- 
-  
     
-
     db.session.add(user)
     db.session.commit()
     

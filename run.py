@@ -6,5 +6,5 @@ import os
 if __name__ == '__main__':
     config_name = os.environ.get('FLASK_ENV') or 'default'
     app = create_app(config[config_name])
-    app.run(host='0.0.0.0', port=7000, debug=True)
+    app.run(host='0.0.0.0', port=4000, debug=True)
     app.register_blueprint(auth_bp)
