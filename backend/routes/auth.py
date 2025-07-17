@@ -72,6 +72,3 @@ def get_profile():
         return jsonify(user.to_dict()), 200
     
     return jsonify({'error': 'User not found'}), 404
-
-# For testing convenience
-bp = auth_bp

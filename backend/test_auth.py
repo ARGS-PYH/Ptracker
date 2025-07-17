@@ -19,7 +19,7 @@ def client():
             db.drop_all()
 
 def register(client, username, email, password):
-    return client.post('/register', json={
+    return client.post('/api/auth/register', json={
         'username': username,
         'email': email,
         'password': password
@@ -63,4 +63,33 @@ def test_duplicate_username(client):
     register(client, 'user7', 'user7@example.com', 'Password123')
     resp = register(client, 'user7', 'user8@example.com', 'Password123')
     assert resp.status_code == 400
-    assert 'Username already taken' in resp.get_json()['error'] 
+    assert 'Username already taken' in resp.get_json()['error']
+
+def test_login_success(client):
+    # Register a user first
+    register(client, 'loginuser', 'loginuser@example.com', 'Password123')
+    resp = client.post('/api/auth/login', json={
+        'email': 'loginuser@example.com',
+        'password': 'Password123'
+    })
+    data = resp.get_json()
+    assert resp.status_code == 200
+    assert 'access_token' in data
+    assert data['user']['username'] == 'loginuser'
+
+def test_login_wrong_password(client):
+    register(client, 'wrongpass', 'wrongpass@example.com', 'Password123')
+    resp = client.post('/api/auth/login', json={
+        'email': 'wrongpass@example.com',
+        'password': 'WrongPassword'
+    })
+    assert resp.status_code == 401
+    assert 'Invalid credentials' in resp.get_json()['error']
+
+def test_login_nonexistent_email(client):
+    resp = client.post('/api/auth/login', json={
+        'email': 'doesnotexist@example.com',
+        'password': 'Password123'
+    })
+    assert resp.status_code == 401
+    assert 'Invalid credentials' in resp.get_json()['error'] 
