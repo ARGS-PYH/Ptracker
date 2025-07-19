@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from backend.database import db, migrate
+from backend.routes.auth import auth_bp
 
 def create_app(config_class):
     app = Flask(__name__, 
@@ -26,9 +27,8 @@ def create_app(config_class):
     def api_status():
         return jsonify({'message': 'API is working', 'status': 'success'}), 200
     
-    # Register blueprints
-    from backend.routes.auth import auth_bp
-
+   
+    
 
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
 

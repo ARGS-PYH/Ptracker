@@ -6,10 +6,15 @@ import re
 
 auth_bp = Blueprint('auth', __name__)
 
+def is_password_strong(password):
+    return len(password) >= 6
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    
+
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
     # Validate input
     if not data.get('username') or not data.get('email') or not data.get('password'):
         return jsonify({'error': 'Missing required fields'}), 400
@@ -24,6 +29,15 @@ def register():
     if len(password) < 8 or not re.search(r"[A-Za-z]", password) or not re.search(r"\d", password):
         return jsonify({'error': 'Password must be at least 8 characters long and contain both letters and numbers'}), 400
     
+    # Check the format of email
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        return jsonify({'error': "Invalid Email format"}), 400
+    
+    # check if password is strong or not 
+    if not is_password_strong(password):
+        return jsonify({'error': 'Password too weak (min 6 char)'}), 400
+    
+
     # Check if user exists
     if User.query.filter_by(email=data['email']).first():
         return jsonify({'error': 'Email already registered'}), 400
@@ -31,15 +45,15 @@ def register():
     if User.query.filter_by(username=data['username']).first():
         return jsonify({'error': 'Username already taken'}), 400
     
-    # Create new user
-    user = User(username=data['username'], email=data['email'])
-    user.set_password(data['password'])
+    
+    user = User(username=username, email=email)
+    user.set_password(password)
     
     db.session.add(user)
     db.session.commit()
     
     # Create access token
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity= user.id)
     
     return jsonify({
         'message': 'User created successfully',
