@@ -28,9 +28,10 @@ def create_app(config_class):
     
     # Register blueprints
     from backend.routes.auth import auth_bp
-
+    from backend.routes.transactions import transactions_bp  # 👈 NEW
 
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    app.register_blueprint(transactions_bp, url_prefix='/api/transactions')  # 👈 NEW
 
     # Create tables
     with app.app_context():
